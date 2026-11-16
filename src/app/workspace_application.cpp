@@ -1576,7 +1576,8 @@ void WorkspaceApplication::prepare(Host& host) {
     return;
   }
   if (!host.root) {
-    host.root = ui::column({.align = FlexAlign::Stretch, .fill = colorSpecFromRole(ColorRole::SurfaceContainerLow)});
+    // Each major area paints its own background once, so translucent panes do not stack over a window fill.
+    host.root = ui::column({.align = FlexAlign::Stretch});
     host.root->setAnimationManager(&m_animations);
     host.surface.setSceneRoot(host.root.get());
     host.dispatcher.setSceneRoot(host.root.get());
@@ -1725,7 +1726,7 @@ void WorkspaceApplication::prepare(Host& host) {
   const float top = stripHeight + kNavigationToolbarHeight;
   const float bodyHeight = std::max(1.0F, height - top - footer);
   const float sidebar = active.sidebarWidth();
-  active.sidebar()->arrange(renderer, {0, top, active.sidebarControlWidth(), bodyHeight});
+  active.sidebar()->arrange(renderer, {0, top, sidebar, bodyHeight});
   const float left = sidebar;
   const float right = width;
   const bool split = visible.size() == 2;

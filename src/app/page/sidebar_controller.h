@@ -4,6 +4,7 @@
 #include "fs/location.h"
 #include "model/directory_options.h"
 #include "render/scene/input_dispatcher.h"
+#include "ui/controls/flex.h"
 
 #include <cstddef>
 #include <memory>
@@ -48,9 +49,8 @@ public:
 
   bool visible() const { return m_showSidebar; }
   void setVisible(bool visible, bool persist = true);
-  // Width the window reserves for the sidebar, and the width of the sidebar controls in it.
+  // Width the window reserves for the sidebar.
   float width() const;
-  float controlWidth() const;
   // True while the resize handle is dragged.
   bool resizing() const { return m_resizingSidebar; }
   // False until the scene is built.
@@ -126,7 +126,7 @@ private:
   InputArea* m_sidebarResize = nullptr;
   Box* m_sidebarResizeLine = nullptr;
   Box* m_placeDropLine = nullptr;
-  Node* m_sidebarBundle = nullptr;
+  Flex* m_sidebarBundle = nullptr;
   std::unique_ptr<Node> m_detachedSidebar;
   std::optional<luciole::Location> m_restorePlaceFocus;
 };

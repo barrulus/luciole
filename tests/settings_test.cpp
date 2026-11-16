@@ -45,6 +45,27 @@ namespace {
     return {std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
   }
 
+  void testBackgroundOpacity() {
+    Fixture fixture;
+    luciole::ConfigService service(fixture.paths());
+    TEST_CHECK(service.reload() && service.settings().browser.backgroundOpacity == 100);
+    fixture.write("config.toml", "[browser]\nbackground_opacity = 40\n");
+    TEST_CHECK(service.reload() && service.settings().browser.backgroundOpacity == 40);
+    for (const int value : {0, 100}) {
+      const std::array edits{luciole::OverrideEdit{luciole::BrowserPreference::BackgroundOpacity, value}};
+      TEST_CHECK(service.saveOverrides(edits) == luciole::AtomicWriteState::Durable);
+      TEST_CHECK(service.reload() && service.settings().browser.backgroundOpacity == value);
+    }
+    const std::array reset{luciole::OverrideEdit{luciole::BrowserPreference::BackgroundOpacity, std::nullopt}};
+    TEST_CHECK(service.saveOverrides(reset) == luciole::AtomicWriteState::Durable);
+    TEST_CHECK(service.reload() && service.settings().browser.backgroundOpacity == 40);
+    for (const auto* value : {"-1", "101", "0.4", "true"}) {
+      fixture.write("config.toml", std::format("[browser]\nbackground_opacity = {}\n", value));
+      TEST_CHECK(!service.reload() && service.settings().browser.backgroundOpacity == 40);
+      TEST_CHECK(!luciole::validateConfigFile(fixture.paths().base).empty());
+    }
+  }
+
   void testTerminalCommand() {
     Fixture fixture;
     luciole::ConfigService service(fixture.paths());
@@ -1107,6 +1128,7 @@ namespace {
 
 int main() {
   try {
+    testBackgroundOpacity();
     testTerminalCommand();
     testSchemaAndDiagnostics();
     testPresentationSettings();

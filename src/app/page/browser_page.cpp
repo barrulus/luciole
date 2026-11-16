@@ -675,8 +675,6 @@ void BrowserPage::ensureScene() {
 
 float BrowserPage::sidebarWidth() const { return m_sidebar.width(); }
 
-float BrowserPage::sidebarControlWidth() const { return m_sidebar.controlWidth(); }
-
 void BrowserPage::pumpJobs() {
   if (m_root) {
     m_transferController.syncConflict();
@@ -1781,6 +1779,9 @@ void BrowserPage::applySettings(const luciole::BrowserSettings& settings, bool f
       adapter->setActivationMode(m_activationMode);
     }
   }
+  if (m_body && (force || before.backgroundOpacity != settings.backgroundOpacity)) {
+    m_body->setFill(colorSpecFromRole(ColorRole::Surface, static_cast<float>(settings.backgroundOpacity) / 100.0F));
+  }
   m_sidebar.applySettings(before, settings, force);
   if (m_settingsController.open()) {
     m_detailsHeader.applySettings(before, settings, force);
@@ -2274,7 +2275,8 @@ void BrowserPage::buildScene() {
       ui::column(
           {.out = &m_body,
            .align = FlexAlign::Stretch,
-           .fill = colorSpecFromRole(ColorRole::Surface),
+           .fill =
+               colorSpecFromRole(ColorRole::Surface, static_cast<float>(m_savedSettings.backgroundOpacity) / 100.0F),
            .clipChildren = true,
            .participatesInLayout = false},
           ui::column(
@@ -2367,7 +2369,11 @@ std::unique_ptr<Flex> BrowserPage::buildTitlebar() {
 
 std::unique_ptr<Flex> BrowserPage::buildToolbar() {
   return ui::row(
-      {.out = &m_toolbar, .align = FlexAlign::Center, .gap = Style::spaceSm, .padding = Style::spaceSm},
+      {.out = &m_toolbar,
+       .align = FlexAlign::Center,
+       .gap = Style::spaceSm,
+       .padding = Style::spaceSm,
+       .fill = colorSpecFromRole(ColorRole::SurfaceContainerLow)},
       ui::row(
           {.align = FlexAlign::Center, .gap = Style::spaceXs},
           ui::button(

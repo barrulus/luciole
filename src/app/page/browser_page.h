@@ -179,7 +179,6 @@ public:
   void ensureScene();
 
   float sidebarWidth() const;
-  float sidebarControlWidth() const;
   void pumpJobs();
   void workspaceMenu(std::vector<ContextMenuControlEntry> entries, std::function<void(int)> callback, float x, float y);
   void transferTo(const luciole::Location& destination, bool copy);

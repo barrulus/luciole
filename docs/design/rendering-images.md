@@ -8,6 +8,10 @@
 
 Luciole owns decoration negotiation, clipboard/drop transport, cursor fallback, browser composition and selection contours. Common widgets use the actual shared Button, Stepper, Select, Toggle, ScrollView and virtual-grid controls. A file-manager preference binding belongs here, while a generic widget correction belongs upstream.
 
+## Window background opacity
+
+`browser.background_opacity` scales only the fills of the file pane, detached sidebar and docked preview. The workspace root has no fill, so these areas each composite once against the desktop, including split panes. Tabs, the toolbar, popups and dialogs retain their ordinary palette fills. Palette alpha is independent; use opaque palette colors when only the major browsing surfaces should be translucent.
+
 ## UI phases
 
 Preserve PrepareFrame → Update → Layout → Render.

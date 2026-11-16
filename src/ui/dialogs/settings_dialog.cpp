@@ -103,6 +103,7 @@ SettingsDialog::SettingsDialog(
   addTerminal();
   section("Appearance", "paint");
   card("Window");
+  addNumber(P::BackgroundOpacity, "Background opacity", {0, 100}, "%");
   addBool(P::AlwaysShowTabBar, "Always show tab bar");
   addBool(P::AlwaysShowStatusBar, "Always show status bar");
   addBool(P::CompactMenus, "Compact context menus");
@@ -355,7 +356,7 @@ void SettingsDialog::addNumber(
   stepper->setMinWidth(180.0F);
   stepper->setMaxWidth(180.0F);
   stepper->setRange(values.front(), values.back());
-  stepper->setStep(16);
+  stepper->setStep(key == P::BackgroundOpacity ? 5 : 16);
   stepper->setValueSuffix(std::move(suffix));
   stepper->setOnValueChanged([this, key, stepper, values](int value) {
     const int previous = luciole::preferenceValue(m_current, key);

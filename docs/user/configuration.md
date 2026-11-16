@@ -67,6 +67,7 @@ All keys below belong in `[browser]`. Dimensions are logical pixels unless state
 | `show_backups` | `true` | Non-directory backup names ending in `~` |
 | `always_show_tab_bar` | `true` | Keep the tab bar visible when a window has only one tab |
 | `always_show_status_bar` | `false` | Keep the status pill visible when idle, showing the item count and free space |
+| `background_opacity` | `100` | Integer `0` through `100`, percent opacity of the file area, sidebar and docked preview. Menus, settings, dialogs, tabs and toolbar keep their palette opacity. Use opaque palette colors and `40` for 60% transparent backgrounds. |
 | `compact_menus` | `true` | Reduce the row height and padding in context menus without shrinking their text |
 | `activation_mode` | `"double_click"` | `"single_click"`, `"double_click"` |
 | `typing_mode` | `"search"` | `"search"` recursively searches filenames; `"filter"` filters names in the current folder only; `"typeahead"` selects names |

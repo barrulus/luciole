@@ -43,6 +43,11 @@ void SidebarController::load(const luciole::BrowserSettings& settings) {
 void SidebarController::applySettings(
     const luciole::BrowserSettings& before, const luciole::BrowserSettings& settings, bool force
 ) {
+  if (m_sidebarBundle && (force || before.backgroundOpacity != settings.backgroundOpacity)) {
+    m_sidebarBundle->setFill(
+        colorSpecFromRole(ColorRole::SurfaceContainerLow, static_cast<float>(settings.backgroundOpacity) / 100.0F)
+    );
+  }
   if (force || before.showSidebar != settings.showSidebar) {
     setVisible(settings.showSidebar, false);
   }
@@ -91,8 +96,6 @@ void SidebarController::setVisible(bool visible, bool persist) {
 float SidebarController::width() const {
   return m_showSidebar ? static_cast<float>(std::min(m_sidebarWidth, maximumWidth())) + kWorkspaceInset : 0.0F;
 }
-
-float SidebarController::controlWidth() const { return m_showSidebar ? width() - kGapInset : 0.0F; }
 
 int SidebarController::maximumWidth() const {
   return std::clamp(
@@ -334,11 +337,16 @@ std::unique_ptr<Node> SidebarController::buildResizeHandle() {
 }
 
 void SidebarController::detach() {
-  m_detachedSidebar = ui::row(
-      {.align = FlexAlign::Stretch, .gap = kGapInset}, m_places->parent()->removeChild(m_places),
-      m_sidebarResize->parent()->removeChild(m_sidebarResize)
+  auto sidebar = ui::row(
+      {.align = FlexAlign::Stretch,
+       .gap = kGapInset,
+       .fill = colorSpecFromRole(
+           ColorRole::SurfaceContainerLow, static_cast<float>(m_page.settings().backgroundOpacity) / 100.0F
+       )},
+      m_places->parent()->removeChild(m_places), m_sidebarResize->parent()->removeChild(m_sidebarResize)
   );
-  m_sidebarBundle = m_detachedSidebar.get();
+  m_sidebarBundle = sidebar.get();
+  m_detachedSidebar = std::move(sidebar);
   m_sidebarBundle->setAnimationManager(&m_animations);
 }
 
